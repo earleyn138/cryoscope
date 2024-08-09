@@ -12,6 +12,7 @@ def create_ser(baudrate, port, parity, bytesize, stopbits, timeout):
     ser.bytesize=bytesize
     ser.stopbits=stopbits
     ser.timeout=timeout
+    ser.open()
     return ser
 
 def read_pressure(ser):
@@ -28,7 +29,7 @@ def read_temp(ser):
     time.sleep(0.05) #20 commands per second max
     return float(temp)
 
-def write_measurement(start_time, pser, tser, filename):
+def write_measurement(start_time, pressure_ser, temp_ser, filename):
     now = time.time() # current date and time
     pressure = read_pressure(pser)
     temp = read_temp(tser)
@@ -54,7 +55,11 @@ def write_measurement(start_time, pser, tser, filename):
 ########
 filename = 'coldtest.csv'
 pser = create_ser(baudrate=9600,port='COM4',parity=serial.PARITY_NONE,bytesize=serial.EIGHTBITS,stopbits=serial.STOPBITS_ONE,timeout=10)
+print('Pressure gauge serial port:', pser)
+print('Pressure serial port open?:', pser.is_open)
 tser = create_ser(baudrate=9600,port='COM3',parity=serial.PARITY_ODD,bytesize=serial.SEVENBITS,stopbits=serial.STOPBITS_ONE,timeout=10)
+print('Lakeshore serial port:', tser)
+print('Lakeshore serial port open?:', tser.is_open)
 
 with open(filename, 'w') as csvfile:
      writer = csv.writer(csvfile)
